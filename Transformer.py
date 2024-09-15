@@ -417,7 +417,7 @@ class MixVisionTransformer(BaseModule):
           self.gamma = gamma
       def forward(self,x,cls_emb):
           _,_,h,w = x.shape
-          gfilter = self.make_gaussian(0,0,h,w,sigma=self.var_conv(cls_emb),cov=self.cov_conv(cls_emb))
+          gfilter = self.make_gaussian(0,0,h,w,sigma=torch.sigmoid(self.var_conv(cls_emb)) * self.theta,cov=torch.sigmoid(self.cov_conv(cls_emb))) * self.gamma
           xf = torch.fft.fft2(x,norm='forward')
           xf = torch.fft.fftshift(xf,dim=(-2,-1))
           xf = xf * gfilter
