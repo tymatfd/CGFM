@@ -409,10 +409,12 @@ class MixVisionTransformer(BaseModule):
         #* sigma_inverse/(torch.sqrt(2 * (torch.zeros(1).cuda() + np.pi)))
         return g/g.sum(dim=(2,3),keepdim=True)
     class DBGBP(nn.Module):
-      def __init__(self,in_dim):
+      def __init__(self,in_dim,theta=0.5,gamma=0.5):
           super().__init__()
           self.var_conv = nn.Conv2d(in_dim,2 * in_dim,1)
           self.cov_conv = nn.Conv2d(in_dim,in_dim,1)
+          self.theta = theta
+          self.gamma = gamma
       def forward(self,x,cls_emb):
           _,_,h,w = x.shape
           gfilter = self.make_gaussian(0,0,h,w,sigma=self.var_conv(cls_emb),cov=self.cov_conv(cls_emb))
